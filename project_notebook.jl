@@ -93,7 +93,7 @@ hist_Parch = @vlplot(data=data_train)+
 
 # ╔═╡ 9b3fa2a4-b390-479b-b95c-de781286d675
 hist_Fare = @vlplot(data=data_train)+
-	@vlplot(:bar, x={:Fare , bin=true}, y="count()", color={:Survived, type = "nominal"})
+	@vlplot(:bar, x={:Fare, bin={step=15}}, y="count()", color={:Survived, type = "nominal"})
 
 # ╔═╡ 3a080067-ab56-43e9-a234-092999b50600
 cor_numeric=cor(Matrix(dropmissing(numeric_df)))
