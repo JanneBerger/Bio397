@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.13
+# v0.19.9
 
 using Markdown
 using InteractiveUtils
@@ -26,14 +26,17 @@ md"""
 ## Overview
 1) Exploring the data
 2) Data Cleaning
-3) Further data Exploration
-4) Feature Engineering
+*3) Further data Exploration*
+*4) Feature Engineering*
 5) Data Preprocessing for Model
 6) Basic Model Building
 7) Model Tuning
 8) Ensemble Modle Building
 9) Results
 """
+
+# ╔═╡ fd397721-6f18-4c8d-b6f7-30a1fce659cc
+
 
 # ╔═╡ e177b819-b7fb-4928-8647-9b7ce097e703
 begin
@@ -45,13 +48,8 @@ end
 # ╔═╡ de761b98-5fc5-4817-89c3-5c841411f0e9
 begin
 	# load Test Data
-		path_test1 = "test.csv"
-		path_test2 = "gender_submission.csv"
-		data_test1 = CSV.read(path_test1, DataFrame)
-		data_test2 = CSV.read(path_test2, DataFrame)
-	# join the test data with the Survived column		
-		data_test = hcat(data_test2[:,2],data_test1)
-		rename!(data_test,:x1 => :Survived)
+		path_test = "test.csv"
+		data_test = CSV.read(path_test, DataFrame)	
 end
 
 # ╔═╡ d122452c-947c-4fd6-a80d-67540fc32895
@@ -209,7 +207,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.2"
 manifest_format = "2.0"
-project_hash = "d1d31faee97e201ffc5dea3970dc7acaf643b546"
+project_hash = "a352194836c26840c669ec1b4b16e8f4df987808"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -777,6 +775,7 @@ version = "17.4.0+0"
 
 # ╔═╡ Cell order:
 # ╠═16ed6ff0-55e3-11ed-1aeb-c516b766726d
+# ╠═fd397721-6f18-4c8d-b6f7-30a1fce659cc
 # ╠═e618e9fa-c633-4563-ba5c-1e7e2bde5c7d
 # ╠═ff72f891-5a14-4241-8720-a7a7d7526aa4
 # ╠═a4b9f1de-48e9-4636-9f8f-0c29cef85ed0
