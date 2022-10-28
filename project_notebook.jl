@@ -19,20 +19,18 @@ using VegaLite
 # ╔═╡ f0e41859-3c46-454f-81df-441841ff6244
 using Statistics
 
+# ╔═╡ 5a7d366b-d6aa-4997-b1f6-16817e3744fb
+using ScikitLearn.CrossValidation: cross_val_score
+
 # ╔═╡ 16ed6ff0-55e3-11ed-1aeb-c516b766726d
 md"""
 # Project: Titanic - Machine Learning from Disaster
 
 ## Overview
 1) Exploring the data
-2) Data Cleaning
-*3) Further data Exploration*
-*4) Feature Engineering*
-5) Data Preprocessing for Model
-6) Basic Model Building
-7) Model Tuning
-8) Ensemble Modle Building
-9) Results
+2) Data Cleaning / Preprocessing
+3) Model Building
+4) Results
 """
 
 # ╔═╡ fd397721-6f18-4c8d-b6f7-30a1fce659cc
@@ -179,11 +177,208 @@ Y = Survived
 ## Data Cleaning
 """
 
-# ╔═╡ 5738f40f-e46d-4070-9a20-8c945b476611
+# ╔═╡ cb2408b8-3b5d-4f10-8092-deee545b8f79
+data_train.Relatives = data_train.SibSp + data_train.Parch
 
+# ╔═╡ 5738f40f-e46d-4070-9a20-8c945b476611
+prov_dataset = dropmissing(data_train[:,[:PassengerId, :Survived, :Pclass, :Sex, :Age, :Relatives, :Fare, :Embarked]])
+
+# ╔═╡ ac96e6b6-4f20-4f9c-810f-5781ffb30073
+prov_y=prov_dataset[:,:Survived]
+
+# ╔═╡ 47c56089-ecc5-4027-98c8-d8a8a3d5aed4
+prov_X=Matrix(prov_dataset[:,[:PassengerId, :Pclass, :Age, :Relatives, :Fare ]]) #:Sex,:Embarked
+
+# ╔═╡ 2d7f34a1-6e5d-4bf6-9c08-6087a9b6db5d
+train_X, train_y = prov_X, prov_y #set with clean dataset
 
 # ╔═╡ 1b7cba49-7bfb-4a58-81dd-290c1e11aa20
+md"""
+## Model Building
 
+- Linear Regression
+- Ridge Regression
+- LASSO Regression
+
+- Logistic Regression
+- K Nearest Neighbor
+- Decision Tree
+- Random Forest
+- Naive Bayes
+
+"""
+
+# ╔═╡ f5d76b3a-07d7-4ff9-ab7e-ef4f5a02d3c9
+md"""
+### Crossvalidation Scoring
+"""
+
+# ╔═╡ 186a207f-bd94-41eb-8f44-4d3f4351f5a9
+md"""
+#### Linear Regression
+"""
+
+# ╔═╡ 5dc3fdd0-420c-4d2c-be54-4298165aefe3
+@sk_import linear_model: LinearRegression
+
+# ╔═╡ 0e03778c-d4c7-45c5-8f60-a001aae38170
+cv_linear = cross_val_score(LinearRegression(),train_X,train_y,cv=5)
+
+# ╔═╡ 17c502d3-5472-4317-b2ca-9d41ee2e29a5
+print(mean(cv_linear))
+
+# ╔═╡ cbf9eaca-2faf-4df0-b78e-0a5382c9f4dc
+md"""
+#### Ridge Regression
+"""
+
+# ╔═╡ de80631a-d43f-4d3c-8f45-6e99ef4f0000
+@sk_import linear_model: Ridge
+
+# ╔═╡ a0388671-980c-4121-8185-c097404110ba
+cv_ridge = cross_val_score(Ridge(),train_X,train_y,cv=5)
+
+# ╔═╡ 3c554589-9d47-4671-b39c-aeb59038285c
+print(mean(cv_ridge))
+
+# ╔═╡ 5f7eb7d9-8bc4-4905-9516-344867b09c04
+md"""
+#### LASSO Regression
+"""
+
+# ╔═╡ 8141c130-faf4-4c5a-a123-9c87c2b5e6f8
+@sk_import linear_model: Lasso
+
+# ╔═╡ c8c1e2e7-051b-4ce0-a034-985606144901
+cv_lasso = cross_val_score(Lasso(),train_X,train_y,cv=5)
+
+# ╔═╡ 028ce317-45f3-4956-a430-ab71fe7a6c89
+print(mean(cv_lasso))
+
+# ╔═╡ 5f0cba84-6abc-4752-bb70-5876ba3d816c
+md"""
+####  Logistic Regression
+"""
+
+# ╔═╡ 00e10186-6e3f-4136-b12e-430535256969
+@sk_import linear_model: LogisticRegression
+
+# ╔═╡ f44da843-9a6c-4182-83cf-47550722aece
+cv_logistic = cross_val_score(LogisticRegression(),train_X,train_y,cv=5)
+
+# ╔═╡ 93a94b9f-fca3-4679-b598-3563986d7bed
+print(mean(cv_logistic))
+
+# ╔═╡ 97b801a7-df03-40e3-a9c3-02d95f305dd2
+md"""
+####  K Nearest Neighbor
+"""
+
+# ╔═╡ 076fd180-ce26-4950-a365-8a57dd5302c6
+@sk_import neighbors: KNeighborsClassifier
+
+# ╔═╡ e361ae1d-ab9d-4812-b596-c22c67ffed51
+cv_kneighbors = cross_val_score(KNeighborsClassifier(),train_X,train_y,cv=5)
+
+# ╔═╡ e1fffe02-f9e5-482c-89ea-22255cd8b04a
+print(mean(cv_kneighbors))
+
+# ╔═╡ 23cb38f0-76f4-4670-beb9-a3a282cc76d0
+md"""
+#### Decision Tree
+"""
+
+# ╔═╡ 1f6255fd-6014-4a22-b381-99a2447f842b
+@sk_import tree: DecisionTreeClassifier
+
+# ╔═╡ 446f21e2-2909-48b9-82d1-f3477b6ff917
+cv_destree = cross_val_score(DecisionTreeClassifier(),train_X,train_y,cv=5)
+
+# ╔═╡ 632cab85-cfea-4b89-b51d-5895b592a721
+print(mean(cv_destree))
+
+# ╔═╡ c23bc7c1-9e2d-4484-a861-5632e60e9c9d
+md"""
+#### Random Forest
+"""
+
+# ╔═╡ 99c9f61d-f8d7-49b1-9aae-5aac69e09fde
+@sk_import ensemble: RandomForestClassifier
+
+# ╔═╡ db7f0796-da6f-4d92-a68a-dfc5f7417675
+cv_randforest = cross_val_score(RandomForestClassifier(),train_X,train_y,cv=5)
+
+# ╔═╡ b7692337-7ee6-46f9-9c6a-c8403a516289
+print(mean(cv_randforest))
+
+# ╔═╡ 30b90969-2d79-4fd2-ba20-aea8fdb89f34
+md"""
+#### Naive Bayes
+"""
+
+# ╔═╡ 202ef197-09b5-4e13-b85c-2e5fa3051be9
+@sk_import naive_bayes: GaussianNB
+
+# ╔═╡ 80f02bc4-7edd-4e33-bd10-2048fb508381
+cv_naibay = cross_val_score(GaussianNB(),train_X,train_y,cv=5)
+
+# ╔═╡ fd52f2d1-022c-4598-96aa-c39b3cea56fc
+print(mean(cv_naibay))
+
+# ╔═╡ 76ee0b16-df5b-4851-ac6a-b07f7c6d46c9
+md"""
+#### Voting Classifier
+"""
+
+# ╔═╡ 3036f114-8c5d-4169-9920-dfac57f63bed
+@sk_import ensemble: VotingClassifier
+
+# ╔═╡ 20866f1e-d925-468c-933c-f28e1ed4c4db
+voting_clf_soft = VotingClassifier(estimators = [
+	("lr", LogisticRegression()),
+	("knn", KNeighborsClassifier()),
+	("dt", DecisionTreeClassifier()),
+	("rf", RandomForestClassifier()),
+	("gnb", GaussianNB())],
+	voting = "soft") 
+
+# ╔═╡ 7549c3ad-3204-4a53-a634-2d3ce88968dc
+voting_clf_hard = VotingClassifier(estimators = [
+	("lr", LogisticRegression()),
+	("knn", KNeighborsClassifier()),
+	("dt", DecisionTreeClassifier()),
+	("rf", RandomForestClassifier()),
+	("gnb", GaussianNB())],
+	voting = "hard"); 
+
+# ╔═╡ 767cbeaf-2a70-4add-b657-fe1127ab39d7
+cv_soft = cross_val_score(voting_clf_soft,train_X,train_y,cv=5)
+
+# ╔═╡ afa0a89d-f491-4340-86bc-37c26c64b345
+cv_hard = cross_val_score(voting_clf_hard,train_X,train_y,cv=5)
+
+# ╔═╡ 84500841-b331-4cbe-8f3d-e250d7909b6f
+print(mean(cv_soft))
+
+# ╔═╡ 484c7947-1e1d-4d2f-8667-b7378b3c7058
+print(mean(cv_hard))
+
+# ╔═╡ 1e89d8ff-745b-4161-b097-0c9d6d9a1571
+md"""
+### Model Fitting
+"""
+
+# ╔═╡ e894c693-8601-4f2c-aff0-d72427752cff
+data_test.Relatives = data_test.SibSp + data_test.Parch
+
+# ╔═╡ 229ac26f-b3ad-4126-9c0d-f1a813304f7b
+prov_X_test=Matrix(dropmissing(data_test[:,[:PassengerId, :Pclass, :Age, :Relatives, :Fare ]]))
+
+# ╔═╡ 686ea650-822d-43cd-995a-c3dbb0ee6963
+model = fit!(LogisticRegression(),train_X,train_y)
+
+# ╔═╡ 8c0f70cc-c56a-460a-abb2-73e7f864479f
+predict(model,prov_X_test)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -801,7 +996,58 @@ version = "17.4.0+0"
 # ╠═81d15ff4-345b-4958-9250-35192f81ec3f
 # ╠═0b42f2c4-8ce8-448d-a93e-435d382ff371
 # ╟─249e9f81-7749-411f-9a86-82c190799a76
+# ╠═cb2408b8-3b5d-4f10-8092-deee545b8f79
 # ╠═5738f40f-e46d-4070-9a20-8c945b476611
-# ╠═1b7cba49-7bfb-4a58-81dd-290c1e11aa20
+# ╠═ac96e6b6-4f20-4f9c-810f-5781ffb30073
+# ╠═47c56089-ecc5-4027-98c8-d8a8a3d5aed4
+# ╠═2d7f34a1-6e5d-4bf6-9c08-6087a9b6db5d
+# ╟─1b7cba49-7bfb-4a58-81dd-290c1e11aa20
+# ╠═5a7d366b-d6aa-4997-b1f6-16817e3744fb
+# ╟─f5d76b3a-07d7-4ff9-ab7e-ef4f5a02d3c9
+# ╟─186a207f-bd94-41eb-8f44-4d3f4351f5a9
+# ╠═5dc3fdd0-420c-4d2c-be54-4298165aefe3
+# ╠═0e03778c-d4c7-45c5-8f60-a001aae38170
+# ╠═17c502d3-5472-4317-b2ca-9d41ee2e29a5
+# ╟─cbf9eaca-2faf-4df0-b78e-0a5382c9f4dc
+# ╠═de80631a-d43f-4d3c-8f45-6e99ef4f0000
+# ╠═a0388671-980c-4121-8185-c097404110ba
+# ╠═3c554589-9d47-4671-b39c-aeb59038285c
+# ╟─5f7eb7d9-8bc4-4905-9516-344867b09c04
+# ╠═8141c130-faf4-4c5a-a123-9c87c2b5e6f8
+# ╠═c8c1e2e7-051b-4ce0-a034-985606144901
+# ╠═028ce317-45f3-4956-a430-ab71fe7a6c89
+# ╟─5f0cba84-6abc-4752-bb70-5876ba3d816c
+# ╠═00e10186-6e3f-4136-b12e-430535256969
+# ╠═f44da843-9a6c-4182-83cf-47550722aece
+# ╠═93a94b9f-fca3-4679-b598-3563986d7bed
+# ╟─97b801a7-df03-40e3-a9c3-02d95f305dd2
+# ╠═076fd180-ce26-4950-a365-8a57dd5302c6
+# ╠═e361ae1d-ab9d-4812-b596-c22c67ffed51
+# ╠═e1fffe02-f9e5-482c-89ea-22255cd8b04a
+# ╟─23cb38f0-76f4-4670-beb9-a3a282cc76d0
+# ╠═1f6255fd-6014-4a22-b381-99a2447f842b
+# ╠═446f21e2-2909-48b9-82d1-f3477b6ff917
+# ╠═632cab85-cfea-4b89-b51d-5895b592a721
+# ╟─c23bc7c1-9e2d-4484-a861-5632e60e9c9d
+# ╠═99c9f61d-f8d7-49b1-9aae-5aac69e09fde
+# ╠═db7f0796-da6f-4d92-a68a-dfc5f7417675
+# ╠═b7692337-7ee6-46f9-9c6a-c8403a516289
+# ╟─30b90969-2d79-4fd2-ba20-aea8fdb89f34
+# ╠═202ef197-09b5-4e13-b85c-2e5fa3051be9
+# ╠═80f02bc4-7edd-4e33-bd10-2048fb508381
+# ╠═fd52f2d1-022c-4598-96aa-c39b3cea56fc
+# ╟─76ee0b16-df5b-4851-ac6a-b07f7c6d46c9
+# ╠═3036f114-8c5d-4169-9920-dfac57f63bed
+# ╠═20866f1e-d925-468c-933c-f28e1ed4c4db
+# ╠═7549c3ad-3204-4a53-a634-2d3ce88968dc
+# ╠═767cbeaf-2a70-4add-b657-fe1127ab39d7
+# ╠═afa0a89d-f491-4340-86bc-37c26c64b345
+# ╠═84500841-b331-4cbe-8f3d-e250d7909b6f
+# ╠═484c7947-1e1d-4d2f-8667-b7378b3c7058
+# ╟─1e89d8ff-745b-4161-b097-0c9d6d9a1571
+# ╠═e894c693-8601-4f2c-aff0-d72427752cff
+# ╠═229ac26f-b3ad-4126-9c0d-f1a813304f7b
+# ╠═686ea650-822d-43cd-995a-c3dbb0ee6963
+# ╠═8c0f70cc-c56a-460a-abb2-73e7f864479f
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
